@@ -2,7 +2,21 @@
 using RestSharp.Authenticators; 
 using System;
 using System.Text.Json;
-public class CheapShark
+public class CheaperStore
+    {
+        public string dealID { get; set; }
+        public string storeID { get; set; }
+        public string salePrice { get; set; }
+        public string retailPrice { get; set; }
+    }
+
+    public class CheapestPrice
+    {
+        public string price { get; set; }
+        public int date { get; set; }
+    }
+
+    public class GameInfo
     {
         public string storeID { get; set; }
         public string gameID { get; set; }
@@ -23,8 +37,12 @@ public class CheapShark
 
     public class Root
     {
-        public CheapShark gameInfo { get; set; }
+        public GameInfo gameInfo { get; set; }
+        public List<CheaperStore> cheaperStores { get; set; }
+        public CheapestPrice cheapestPrice { get; set; }
     }
+
+
 
 class Program {
 
@@ -58,16 +76,18 @@ url = "https://www.cheapshark.com/api/1.0/deals?id=X8sebHhbc1Ga0dTkgg59WgyM506af
 
 
     var client =  new RestClient(url);
-var title = "";
-    var request = new RestRequest();
+
+    var request = new RestRequest("https://www.cheapshark.com/api/1.0/deals?id=X8sebHhbc1Ga0dTkgg59WgyM506af9oNZZJLU9uSrX8%3D");
+    Console.WriteLine(request);
     var response = client.Get(request);
 Console.WriteLine(response.Content);   // Console.WriteLine(response.Content.ToString());
- Root cheapshark =JsonSerializer.Deserialize<Root>(response.Content);
-   Console.WriteLine(cheapshark);
-Console.WriteLine($"Game title is {cheapshark.name}");
-Console.WriteLine($"Normal Pricing is {cheapshark.normalPrice}");
-Console.WriteLine($"Sale Pricing is {cheapshark.salePrice}");
-Console.WriteLine($"The ratings are {cheapshark.steamRatingText}, with {cheapshark.steamRatingCount} reviews");
+ Root root =JsonSerializer.Deserialize<Root>(response.Content);
+   Console.WriteLine(root.gameInfo);
+   Console.WriteLine(root.gameInfo.storeID);
+Console.WriteLine($"Game title is {root.gameInfo.name}");
+Console.WriteLine($"Normal Pricing is {root.gameInfo.retailPrice}");
+Console.WriteLine($"Cheapest price is {root.cheapestPrice.price}");
+Console.WriteLine($"The ratings are {root.gameInfo.steamRatingText}, with {root.gameInfo.steamRatingCount} reviews");
     
     
 
